@@ -115,14 +115,157 @@ fn main () {
 
 // Moving Captured Values Out of Closures and the Fn Traits
 
-impl <T> Option<T> {
-    pub fn unwrap_or_else<F>(self, f: F) -> T
-    where
-        F: FnOnce() -> T
-    {
-        match self {
-            Some(x) => x,
-            None => f(),
-        }
-    }
-}
+// impl <T> Option<T> {
+//     pub fn unwrap_or_else<F>(self, f: F) -> T
+//     where
+//     // This means F must be able to be called once, take no arguments, and return a T
+//         F: FnOnce() -> T
+//     {
+//         match self {
+//             Some(x) => x,
+//             None => f(),
+//         }
+//     }
+// }
+
+// Using sort_by_key to order rectangles by width
+// #derive(Debug)
+// struct Rectangle {
+//     width: u32,
+//     height: u32,
+// }
+
+// fn main() {
+//     let mut list = [
+//         Rectangle { width: 10, height: 1 },
+//         Rectangle { width: 3, height: 5 },
+//         Rectangle { width: 7, height: 12 },
+//     ];
+
+//     list.sort_by_key(|r| r.width);
+//     println!("{:#?}", list);
+// }
+
+// Attempting to use an fnOnce closure with sort_by_key
+// This is a convoluted way that doesnt work to try and count the number of times sory_by_key gets called when sorting list.
+// #[derive(Debug)]
+// struct Rectangle {
+//     width: u32,
+//     height: u32,
+// }
+
+// fn main() {
+//     let mut list = [
+//         Rectangle { width: 10, height: 1 },
+//         Rectangle { width: 3, height: 5 },
+//         Rectangle { width: 7, height: 12},
+//     ];
+
+//     let mut sort_operations = vec![];
+//     let value = String::from("by key called");
+
+//     list.sort_by_key(|r| {
+//         sort_operations.push(value);
+//         r.width
+//     });
+//     println!("{:#?}", list);
+// }
+
+// Using an FnMut closure with sort_by_key
+// #[derive(Debug)]
+// struct Rectangle {
+//     width: u32,
+//     height: u32,
+// }
+
+// fn main() {
+//     let mut list = [
+//         Rectangle { width: 10, height: 1 },
+//         Rectangle { width: 3, height: 5 },
+//         Rectangle { width: 7, height: 12 },
+//     ];
+
+//     let mut num_sort_operations = 0;
+//     list.sort_by_key(|r| {
+//         num_sort_operations += 1;
+//         r.width
+//     });
+//     println!("{:#?}, sorted in {num_sort_operations} operations", list);
+// }
+
+// Processing a Series of Items with iterators
+
+// The iterator pattern allows you to perform some task on a sequence of items in turn
+// An iterator is responsible for the logic of iterating over each item and determing 
+// When the sequence has finished. You don't have to implement the logic yourself!
+
+// Using an iterator in a for loop
+// let v1 = vec![1, 2, 3];
+
+// let v1_iter = v1.iter();
+
+// for val in v1_iter {
+//     println!("Got: {}", val)
+// }
+
+// The Iterator Trait and the next Method
+// pub trait Iterator {
+//     type Item;
+
+//     fn next (&mut self) -> Option<Self::Item>;
+
+//     // methods with default implementations elided
+// }
+// New syntax is introduced here. type Item, and Self::Item.
+// These are defining an associated type with this trait.
+// This code says implementing the Iterator trait requires that you also define an item type
+// the Item type will be the type return from the iterator
+
+// Calling the next method on an iterator
+// v1_iter has to be mutable because each next call eats up an item from the iterator
+// #[test]
+// fn iterator_demonstration() {
+//     let v1 = vec![1, 2, 3];
+
+//     let mut v1_iter = v1.iter();
+
+//     assert_eq!(v1_iter.next(), Some(&1));
+//     assert_eq!(v1_iter.next(), Some(&2));
+//     assert_eq!(v1_iter.next(), Some(&3));
+//     assert_eq!(v1_iter.next(), None);
+
+// }
+
+// Methods that Consume the Iterator
+// Calling the sum method to get the total of all items in the iterator
+// #[test]
+// fn iterator_sum() {
+//     let v1 = vec![1, 2, 3];
+
+//     let v1_iter = v1.iter();
+
+//     let total: i32 = v1_iter.sum();
+
+//     assert_eq!(total, 6);
+
+// }
+// WE cant use v1_iter after the call to sum because sum takes ownership of the iterator we call it on
+
+// Methods that PRoduce Other Iterators
+
+// let v1: Vec<i32> = vec![1, 2, 3];
+
+// v1.iter().map(|x| x + 1);
+// Calling the iterator adaptor map to create a new iterator
+// #[test]
+// fn iterator_sum() {
+// let v1: Vec<i32> = vec![1, 2, 3];
+
+// let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+
+// assert_eq!(v2, vec![2, 3, 4]);
+// }
+// Calling the map method to create a new iterator and then calling the collect method to
+// consume the new iterator and create a vector 
+
+// Using Closures that Capture Their Environment
